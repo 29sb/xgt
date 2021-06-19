@@ -516,6 +516,14 @@ void witness_plugin::plugin_initialize(const boost::program_options::variables_m
          my->_private_keys[private_key->get_public_key()] = *private_key;
       }
    }
+      if( options.count("mining-threads") )
+   {
+      _mining_threads = std::min( options["mining-threads"].as<uint32_t>(), uint32_t(64) );
+      _thread_pool.resize( _mining_threads );
+      for( uint32_t i = 0; i < _mining_threads; ++i )
+         _thread_pool[i] = std::make_shared<fc::thread>();
+   }
+
 
    my->_production_enabled = options.at( "enable-stale-production" ).as< bool >();
 
